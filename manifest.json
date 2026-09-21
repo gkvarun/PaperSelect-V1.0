@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "PapaCambridge CAIE Opener",
+  "version": "1.0.0",
+  "description": "Open CAIE past paper PDFs from PapaCambridge by choosing subject, year, series, component and variant.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Open CAIE PDF"
+  },
+  "icons": {
+    "128": "icon48.jpg"
+  },
+  "permissions": ["tabs"],
+  "host_permissions": [
+    "https://pastpapers.papacambridge.com/directories/CAIE/CAIE-pastpapers/upload/*"
+  ]
+}

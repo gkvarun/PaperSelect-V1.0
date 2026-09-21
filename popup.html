@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>PapaCambridge CAIE</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      min-width: 260px;
+      padding: 10px;
+    }
+    label {
+      font-size: 13px;
+      display: block;
+      margin-top: 6px;
+    }
+    select, input, button {
+      width: 100%;
+      margin-top: 3px;
+      padding: 5px;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 10px;
+    }
+    small {
+      font-size: 11px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h3>PapaCambridge CAIE</h3>
+
+  <label for="subject">Subject</label>
+  <select id="subject">
+    <option value="9709">Mathematics</option>
+    <option value="9093">English</option>
+    <option value="9702">Physics</option>
+    <option value="9701">Chemistry</option>
+    <option value="9626">IT</option>
+    <option value="9700">Biology</option>
+    <option value="9706">Accounts</option>
+    <option value="9609">Business</option>
+    <option value="9708">Economics</option>
+    <option value="9990">Psychology</option>
+    <option value="9084">Law</option>
+  </select>
+
+<label for="year">Year</label>
+<select id="year"></select>
+
+<label for="series">Series</label>
+<select id="series">
+  <option value="m">March (m)</option>
+  <option value="s">May/June (s)</option>
+  <option value="w">Oct/Nov (w)</option>
+</select>
+
+  <label for="paper">Component (paper)</label>
+  <input id="paper" type="number" min="1" max="9" placeholder="1">
+
+<label for="variant">Variant</label>
+<select id="variant">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select>
+ 
+
+  <label for="ptype">Paper type</label>
+  <select id="ptype">
+    <option value="qp">Question paper (qp)</option>
+    <option value="ms">Mark scheme (ms)</option>
+    <option value="er">Examiner report (er)</option>
+  </select>
+
+  <small>Pattern: &lt;code&gt;_&lt;series&gt;&lt;yy&gt;_&lt;type&gt;_&lt;paper&gt;&lt;variant&gt;.pdf</small>
+
+  <div id="error" style="color:#c00; font-size:11px; margin-top:6px;"></div>
+  <button id="open">Open PDF</button>
+
+  <script src="popup.js"></script>
+</body>
+</html>
