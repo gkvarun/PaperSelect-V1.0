@@ -1,85 +1,168 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>PapaCambridge CAIE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PaperSelect</title>
   <style>
+    :root {
+      color-scheme: light;
+      --ink: #17233c;
+      --muted: #6d7788;
+      --paper: #f7f4ed;
+      --surface: #fffefa;
+      --line: #e4e1d9;
+      --navy: #1d2b49;
+      --navy-hover: #293b60;
+      --accent: #d9e4d0;
+      --danger: #a52e37;
+    }
+    * { box-sizing: border-box; }
     body {
-      font-family: Arial, sans-serif;
-      min-width: 260px;
-      padding: 10px;
+      width: 340px;
+      margin: 0;
+      padding: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 13px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    label {
-      font-size: 13px;
-      display: block;
-      margin-top: 6px;
+    .topbar {
+      background: var(--navy);
+      color: white;
+      padding: 18px 20px 17px;
+      position: relative;
+      overflow: hidden;
     }
-    select, input, button {
-      width: 100%;
-      margin-top: 3px;
-      padding: 5px;
-      font-size: 13px;
-      box-sizing: border-box;
+    .topbar::after {
+      content: "";
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      right: -30px;
+      top: -48px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 50%;
+      box-shadow: 0 0 0 14px rgba(255,255,255,.035), 0 0 0 29px rgba(255,255,255,.025);
+      pointer-events: none;
     }
-    button {
-      margin-top: 10px;
+    .brand { display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
+    .brand-mark {
+      display: grid; place-items: center; width: 34px; height: 34px;
+      border-radius: 10px; background: #f0e8d8; color: var(--navy);
+      font-size: 18px; font-weight: 800;
     }
-    small {
-      font-size: 11px;
-      color: #666;
+    h1 { font-size: 17px; line-height: 1.2; margin: 0; letter-spacing: -.35px; }
+    .subtitle { margin: 4px 0 0; color: #d2d9e5; font-size: 11px; }
+    main { padding: 17px 18px 18px; }
+    .section-heading {
+      margin: 0 0 12px; display: flex; align-items: center; justify-content: space-between;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 750; color: #657086;
     }
+    .section-heading span:last-child { font-size: 10px; letter-spacing: .2px; text-transform: none; font-weight: 500; }
+    .field { margin-bottom: 12px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+    label { display: block; margin: 0 0 5px; font-size: 11px; font-weight: 700; color: #3c4960; }
+    select, input {
+      appearance: auto; display: block; width: 100%; min-height: 37px; padding: 8px 10px;
+      border: 1px solid #d9dce1; border-radius: 8px; background: var(--surface);
+      color: var(--ink); font: inherit; outline: none; transition: border-color .15s, box-shadow .15s;
+    }
+    select:focus, input:focus { border-color: #6b7fa3; box-shadow: 0 0 0 3px rgba(70,93,137,.12); }
+    input::placeholder { color: #a0a6b0; }
+    .helper { margin: -3px 0 13px; color: var(--muted); font-size: 10px; }
+    .error {
+      display: none; margin: 0 0 10px; padding: 9px 10px; border-radius: 7px;
+      color: var(--danger); background: #fae9e8; font-size: 11px;
+    }
+    .error:not(:empty) { display: block; }
+    .open-button {
+      width: 100%; display: flex; justify-content: center; align-items: center; gap: 9px;
+      min-height: 42px; padding: 10px 14px; border: 0; border-radius: 9px;
+      background: var(--navy); color: #fff; font: inherit; font-weight: 750; cursor: pointer;
+      transition: background .15s, transform .15s;
+    }
+    .open-button:hover { background: var(--navy-hover); }
+    .open-button:active { transform: translateY(1px); }
+    .arrow { font-size: 16px; line-height: 1; }
+    .footer { margin-top: 13px; padding-top: 11px; border-top: 1px solid var(--line); color: #858b96; font-size: 10px; text-align: center; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   </style>
 </head>
 <body>
-  <h3>PapaCambridge CAIE</h3>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">P</div>
+      <div>
+        <h1>PaperSelect</h1>
+        <p class="subtitle">Cambridge past papers, one click away</p>
+      </div>
+    </div>
+  </header>
 
-  <label for="subject">Subject</label>
-  <select id="subject">
-    <option value="9709">Mathematics</option>
-    <option value="9093">English</option>
-    <option value="9702">Physics</option>
-    <option value="9701">Chemistry</option>
-    <option value="9626">IT</option>
-    <option value="9700">Biology</option>
-    <option value="9706">Accounts</option>
-    <option value="9609">Business</option>
-    <option value="9708">Economics</option>
-    <option value="9990">Psychology</option>
-    <option value="9084">Law</option>
-  </select>
+  <main>
+    <div class="section-heading"><span>Build your paper</span><span>CAIE · PDF finder</span></div>
 
-<label for="year">Year</label>
-<select id="year"></select>
+    <div class="field">
+      <label for="subject">Subject</label>
+      <select id="subject">
+        <option value="9709">Mathematics</option>
+        <option value="9093">English Language</option>
+        <option value="9702">Physics</option>
+        <option value="9701">Chemistry</option>
+        <option value="9626">Information Technology</option>
+        <option value="9700">Biology</option>
+        <option value="9706">Accounting</option>
+        <option value="9609">Business</option>
+        <option value="9708">Economics</option>
+        <option value="9990">Psychology</option>
+        <option value="9084">Law</option>
+      </select>
+    </div>
 
-<label for="series">Series</label>
-<select id="series">
-  <option value="m">March (m)</option>
-  <option value="s">May/June (s)</option>
-  <option value="w">Oct/Nov (w)</option>
-</select>
+    <div class="field-row">
+      <div class="field">
+        <label for="year">Exam year</label>
+        <select id="year"></select>
+      </div>
+      <div class="field">
+        <label for="series">Exam series</label>
+        <select id="series">
+          <option value="m">Feb / March</option>
+          <option value="s">May / June</option>
+          <option value="w">Oct / Nov</option>
+        </select>
+      </div>
+    </div>
 
-  <label for="paper">Component (paper)</label>
-  <input id="paper" type="number" min="1" max="9" placeholder="1">
+    <div class="field-row">
+      <div class="field">
+        <label for="paper">Paper component</label>
+        <input id="paper" type="number" min="1" max="9" placeholder="e.g. 42" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label for="variant">Variant</label>
+        <select id="variant">
+          <option value="1">Variant 1</option>
+          <option value="2">Variant 2</option>
+          <option value="3">Variant 3</option>
+        </select>
+      </div>
+    </div>
 
-<label for="variant">Variant</label>
-<select id="variant">
-<option value="1">1</option>
-<option value="2">2</option>
-<option value="3">3</option>
-</select>
- 
+    <div class="field">
+      <label for="ptype">Resource type</label>
+      <select id="ptype">
+        <option value="qp">Question paper</option>
+        <option value="ms">Mark scheme</option>
+        <option value="er">Examiner report</option>
+      </select>
+    </div>
 
-  <label for="ptype">Paper type</label>
-  <select id="ptype">
-    <option value="qp">Question paper (qp)</option>
-    <option value="ms">Mark scheme (ms)</option>
-    <option value="er">Examiner report (er)</option>
-  </select>
-
-  <small>Pattern: &lt;code&gt;_&lt;series&gt;&lt;yy&gt;_&lt;type&gt;_&lt;paper&gt;&lt;variant&gt;.pdf</small>
-
-  <div id="error" style="color:#c00; font-size:11px; margin-top:6px;"></div>
-  <button id="open">Open PDF</button>
+    <p class="helper">Choose the paper component (for example, 42 for Paper 4, variant 2).</p>
+    <div id="error" class="error" role="alert" aria-live="polite"></div>
+    <button id="open" class="open-button" type="button">Open PDF <span class="arrow" aria-hidden="true">↗</span></button>
+    <div class="footer">Made for focused revision · Always check the syllabus code</div>
+  </main>
 
   <script src="popup.js"></script>
 </body>
