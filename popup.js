@@ -9,56 +9,39 @@ const variantEl = document.getElementById("variant");
 const ptypeEl = document.getElementById("ptype");
 const errorEl = document.getElementById("error");
 
-// Populate last 10 years, newest first
+// Populate the latest 10 years, newest first.
 (function populateYears() {
   const current = new Date().getFullYear();
-  const min = current - 9;
-  for (let y = current; y >= min; y--) {
-    const opt = document.createElement("option");
-    opt.value = String(y);
-    opt.textContent = String(y);
-    yearEl.appendChild(opt);
+  for (let year = current; year >= current - 9; year--) {
+    const option = document.createElement("option");
+    option.value = String(year);
+    option.textContent = String(year);
+    yearEl.appendChild(option);
   }
   yearEl.value = String(current);
 })();
 
-// Helper to set variant options depending on series
 function updateVariantOptions() {
-  const series = seriesEl.value;
+  const previousValue = variantEl.value;
+  variantEl.replaceChildren();
 
-  // Clear existing options
-  while (variantEl.firstChild) {
-    variantEl.removeChild(variantEl.firstChild);
-  }
+  // CAIE February/March papers use variant 2.
+  const variants = seriesEl.value === "m" ? ["2"] : ["1", "2", "3"];
+  variants.forEach(value => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = `Variant ${value}`;
+    variantEl.appendChild(option);
+  });
 
-  if (series === "m") {
-    // March: only variant 2
-    const opt = document.createElement("option");
-    opt.value = "2";
-    opt.textContent = "2";
-    variantEl.appendChild(opt);
-    variantEl.value = "2";
-  } else {
-    // s or w: variants 1, 2, 3
-    ["1", "2", "3"].forEach(v => {
-      const opt = document.createElement("option");
-      opt.value = v;
-      opt.textContent = v;
-      variantEl.appendChild(opt);
-    });
-    if (!["1", "2", "3"].includes(variantEl.value)) {
-      variantEl.value = "1";
-    }
-  }
+  variantEl.value = variants.includes(previousValue) ? previousValue : variants[0];
 }
 
-// Run once on load and whenever series changes
 updateVariantOptions();
 seriesEl.addEventListener("change", updateVariantOptions);
 
-// Error helpers
-function showError(msg) {
-  errorEl.textContent = msg;
+function showError(message) {
+  errorEl.textContent = message;
 }
 function clearError() {
   errorEl.textContent = "";
@@ -75,49 +58,42 @@ function validate() {
   const ptype = ptypeEl.value.trim();
 
   if (!subject || !year || !series || !paper || !variant || !ptype) {
-    showError("All fields are required.");
+    showError("Please complete every field to find your PDF.");
     return null;
   }
-
   if (!/^\d{4}$/.test(subject)) {
-    showError("Subject code must be 4 digits (e.g. 9709).");
+    showError("Subject code must be 4 digits (for example, 9709).");
     return null;
   }
 
-  const yearNum = parseInt(year, 10);
+  const yearNum = Number.parseInt(year, 10);
   const current = new Date().getFullYear();
-  if (isNaN(yearNum) || yearNum < current - 9 || yearNum > current) {
-    showError("Year must be within the last 10 exam years.");
+  if (!Number.isInteger(yearNum) || yearNum < current - 9 || yearNum > current) {
+    showError("Choose a year from the latest 10 exam years.");
     return null;
   }
-
   if (!["m", "s", "w"].includes(series)) {
-    showError("Series must be m (March), s (June), or w (Oct/Nov).");
+    showError("Choose a valid exam series.");
     return null;
   }
 
-  const paperNum = parseInt(paper, 10);
-  const variantNum = parseInt(variant, 10);
-  if (
-    isNaN(paperNum) ||
-    paperNum < 0 ||
-    paperNum > 9 ||
-    isNaN(variantNum) ||
-    variantNum < 1 ||
-    variantNum > 3
-  ) {
-    showError("Component 0–9; variant 1–3 (March is fixed to 2).");
+  const paperNum = Number.parseInt(paper, 10);
+  const variantNum = Number.parseInt(variant, 10);
+  if (!Number.isInteger(paperNum) || paperNum < 1 || paperNum > 9) {
+    showError("Paper component must be a number from 1 to 9.");
+    paperEl.focus();
     return null;
   }
-
-  // Extra rule: for March, variant must be 2
+  if (!Number.isInteger(variantNum) || !["1", "2", "3"].includes(variant)) {
+    showError("Choose a valid paper variant.");
+    return null;
+  }
   if (series === "m" && variantNum !== 2) {
-    showError("For Feb/March, variant is always 2.");
+    showError("February/March papers use variant 2.");
     return null;
   }
-
   if (!["qp", "ms", "er"].includes(ptype)) {
-    showError("Paper type must be qp, ms, or er.");
+    showError("Choose a valid resource type.");
     return null;
   }
 
@@ -129,14 +105,16 @@ document.getElementById("open").addEventListener("click", async () => {
   if (!data) return;
 
   const { subject, yearNum, series, paperNum, variantNum, ptype } = data;
-
-  const yy = String(yearNum).slice(2);
-  const compVar = `${paperNum}${variantNum}`.padStart(2, "0");
-
-  const filename = `${subject}_${series}${yy}_${ptype}_${compVar}.pdf`;
+  const yy = String(yearNum).slice(-2);
+  const componentVariant = `${paperNum}${variantNum}`.padStart(2, "0");
+  const filename = `${subject}_${series}${yy}_${ptype}_${componentVariant}.pdf`;
   const url = BASE + filename;
 
-  console.log("Opening:", url);
   clearError();
-  await chrome.tabs.create({ url });
+  try {
+    await chrome.tabs.create({ url });
+  } catch (error) {
+    console.error("Could not open past paper:", error);
+    showError("Could not open the PDF. Please try again.");
+  }
 });
